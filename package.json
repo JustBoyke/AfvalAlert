@@ -1,0 +1,17 @@
+{
+  "name": "afvalalert",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Boyke van Vugt",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "castv2-client": "^1.2.0",
+    "node-cron": "^3.0.2",
+    "node-googlehome": "^0.0.7"
+  }
+}
