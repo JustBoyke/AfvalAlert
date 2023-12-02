@@ -59,7 +59,10 @@ function playTTS(client, originalVolume, message) {
 
 // Deze cronjob wordt elke dag om 23:00 uur uitgevoerd voor de volgende dag
 cron.schedule('0 16 * * *', async () => {
-  const tomorrowDate = getTodayDate(); // We halen eigenlijk 'vandaag' op, want het script loopt om 23:00 uur
+  var tomorrowDate = getTodayDate(); // We halen eigenlijk 'vandaag' op, want het script loopt om 23:00 uur
+  //add 1 day to the date/time
+  tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+
   const wasteTypesTomorrow = await fetchWasteCollectionData(tomorrowDate);
   if (wasteTypesTomorrow) {
     const client = new Client();
