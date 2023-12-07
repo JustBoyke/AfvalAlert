@@ -1,19 +1,22 @@
 const axios = require('axios');
 const { Client, DefaultMediaReceiver } = require('castv2-client');
 const cron = require('node-cron');
+const moment = require('moment');
+moment.locale('nl');
 
 const API_KEY = '5ef443e778f41c4f75c69459eea6e6ae0c2d92de729aa0fc61653815fbd6a8ca'; // Vervang dit met de daadwerkelijke API-key
 const DEVICE_ADDRESS = '192.168.178.105'; // Vervang dit met het IP-adres van je Google Nest Hub
 const VOLUME = 0.8; // 80% volume
 
-function getTodayDate() {
+async function getTodayDate() {
   const today = new Date();
   return today.toISOString().split('T')[0];
 }
 
 async function fetchWasteCollectionData(dateToCheck) {
   try {
-    const response = await axios.get('https://api.mijnafvalwijzer.nl/webservices/appsinput/?apikey=5ef443e778f41c4f75c69459eea6e6ae0c2d92de729aa0fc61653815fbd6a8ca&method=postcodecheck&postcode=5344ST&street=&huisnummer=3&toevoeging=&app_name=afvalwijzer&platform=phone&afvaldata=2021-01-01&langs=nl');
+    var todayDate = moment().format('YYYY-MM-DD');
+    const response = await axios.get(`https://api.mijnafvalwijzer.nl/webservices/appsinput/?apikey=5ef443e778f41c4f75c69459eea6e6ae0c2d92de729aa0fc61653815fbd6a8ca&method=postcodecheck&postcode=5344ST&street=&huisnummer=3&toevoeging=&app_name=afvalwijzer&platform=phone&afvaldata=${todayDate}&langs=nl`);
 
     const collectionsOnDate = response.data.ophaaldagen.data.filter(d => d.date === dateToCheck);
     if (collectionsOnDate.length > 0) {
@@ -59,9 +62,14 @@ function playTTS(client, originalVolume, message) {
 
 // Deze cronjob wordt elke dag om 23:00 uur uitgevoerd voor de volgende dag
 cron.schedule('0 16 * * *', async () => {
-  var tomorrowDate = getTodayDate(); // We halen eigenlijk 'vandaag' op, want het script loopt om 23:00 uur
-  //add 1 day to the date/time
-  tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+  var tomorrowDate = moment().format('YYYY-MM-DD');
+  //transform to moment
+  var tomorrow = moment(tomorrowDate, 'YYYY-MM-DD');
+  //add 1 day
+  tomorrow.add(1, 'days');
+  //transform back to string
+  tomorrowDate = tomorrow.format('YYYY-MM-DD');
+  console.log(tomorrowDate);
 
   const wasteTypesTomorrow = await fetchWasteCollectionData(tomorrowDate);
   if (wasteTypesTomorrow) {
@@ -92,7 +100,7 @@ cron.schedule('0 16 * * *', async () => {
 
 // Deze cronjob wordt elke dag om 07:00 uur uitgevoerd voor de huidige dag
 cron.schedule('0 7 * * *', async () => {
-  const todayDate = getTodayDate();
+  const todayDate = moment().format('YYYY-MM-DD');
   const wasteTypesToday = await fetchWasteCollectionData(todayDate);
   if (wasteTypesToday) {
     const client = new Client();
