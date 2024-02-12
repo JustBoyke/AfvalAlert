@@ -7,6 +7,9 @@ moment.locale('nl');
 const API_KEY = '5ef443e778f41c4f75c69459eea6e6ae0c2d92de729aa0fc61653815fbd6a8ca'; // Vervang dit met de daadwerkelijke API-key
 const DEVICE_ADDRESS = '192.168.178.105'; // Vervang dit met het IP-adres van je Google Nest Hub
 const VOLUME = 0.8; // 80% volume
+const ZIP_CODE = '1234AB'; // Vervang dit met je eigen postcode
+const HOUSE_NUMBER = '1'; // Vervang dit met je eigen huisnummer
+const HOUSE_NUMBER_SUFFIX = ''; // Vervang dit met je eigen huisnummer toevoeging
 
 async function getTodayDate() {
   const today = new Date();
@@ -16,7 +19,7 @@ async function getTodayDate() {
 async function fetchWasteCollectionData(dateToCheck) {
   try {
     var todayDate = moment().format('YYYY-MM-DD');
-    const response = await axios.get(`https://api.mijnafvalwijzer.nl/webservices/appsinput/?apikey=5ef443e778f41c4f75c69459eea6e6ae0c2d92de729aa0fc61653815fbd6a8ca&method=postcodecheck&postcode=5344ST&street=&huisnummer=3&toevoeging=&app_name=afvalwijzer&platform=phone&afvaldata=${todayDate}&langs=nl`);
+    const response = await axios.get(`https://api.mijnafvalwijzer.nl/webservices/appsinput/?apikey=${API_KEY}&method=postcodecheck&postcode=${ZIP_CODE}&street=&huisnummer=${HOUSE_NUMBER}&toevoeging=${HOUSE_NUMBER_SUFFIX}&app_name=afvalwijzer&platform=phone&afvaldata=${todayDate}&langs=nl`);
 
     const collectionsOnDate = response.data.ophaaldagen.data.filter(d => d.date === dateToCheck);
     if (collectionsOnDate.length > 0) {
