@@ -25,3 +25,6 @@ This script is designed to integrate with Google Nest devices, providing timely 
 ## Disclaimer
 
 Republishing or redistribution of this code is strictly prohibited without prior permission.
+
+
+<!-- Security scan triggered at 2025-09-02 01:46:10 -->
